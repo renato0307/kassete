@@ -1,2 +1,2 @@
 # kassete
-Kubernetes TUI to manage resources in groups.
+Kubernetes TUI to manage resources in sets.
