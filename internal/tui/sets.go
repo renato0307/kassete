@@ -1,3 +1,6 @@
+// (c) 2025 Renato Torres
+// GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 package tui
 
 import (
@@ -27,6 +30,11 @@ func (m setsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m setsModel) View() string {
-	s := "\nPress q to quit.\n"
+	cfg := getConfig()
+	s := "Pick a set:\n"
+	for _, set := range cfg.Sets {
+		s += set.Name + "\n"
+	}
+	s = "\nPress q to quit.\n"
 	return s
 }

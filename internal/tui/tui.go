@@ -1,3 +1,6 @@
+// (c) 2025 Renato Torres
+// GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 package tui
 
 import (
@@ -10,14 +13,14 @@ type model struct {
 	current tea.Model
 }
 
-var rootModel model
+var root model
 
 func NewRootModel(config config.Config) model {
-	rootModel = model{
+	root = model{
 		config:  config,
 		current: newSetsModel(),
 	}
-	return rootModel
+	return root
 }
 
 func (m model) Init() tea.Cmd {
@@ -25,14 +28,7 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
-			return m, tea.Quit
-		}
-	}
-	return m, nil
+	return m.getCurrent().Update(msg)
 }
 
 func (m model) View() string {
@@ -46,10 +42,10 @@ func (m model) getCurrent() tea.Model {
 	return m.current
 }
 
-func RootModel() model {
-	return rootModel
+func getRootModel() model {
+	return root
 }
 
-func Config() config.Config {
-	return RootModel().config
+func getConfig() config.Config {
+	return getRootModel().config
 }

@@ -3,60 +3,20 @@
 
 package config
 
-import (
-	"fmt"
-	"os"
-
-	"gopkg.in/yaml.v3"
-)
-
 type Config struct {
-	sets []Set
+	ConfigFile string `short:"c" long:"config" help:"Path to the configuration file, if not set, a demo configuration will be used" env:"CONFIG"`
+	Dev        bool   `long:"dev" help:"Run in development mode, sets log level to debug and logs to debug.log" env:"DEV"`
+	LogLevel   string `long:"loglevel" help:"Log level, the possible values are debug or info" default:"info" env:"LOG_LEVEL"`
+	LogFile    string `long:"logfile" help:"Log file, if not set, logging will be disabled" default:"" env:"LOG_FILE"`
+	Sets       []Set  `long:"sets" help:"Sets of resources to manage"`
 }
 
 type Set struct {
-	Name  string
-	Items []Item
+	Name  string `long:"name"`
+	Items []Item `long:"items"`
 }
 
 type Item struct {
-	Name string
-	Type string
-}
-
-func FromFile(path string) (Config, error) {
-	content, err := os.ReadFile(path)
-	if err != nil {
-		return Config{}, fmt.Errorf("could not config read file: %w", err)
-	}
-	return New(string(content))
-}
-
-func New(yamlConfig string) (Config, error) {
-	config := Config{}
-	err := yaml.Unmarshal([]byte(yamlConfig), config)
-	if err != nil {
-		return Config{}, fmt.Errorf("could not unmarshal config: %w", err)
-	}
-	return Config{}, nil
-}
-
-func Test() Config {
-	config, _ := New(`
-		sets:
-		- name: "set1"
-			items:
-			- name: "item1"
-			  type: "type1"
-			- name: "item2"
-			  type: "type2"
-		- name: "set2"
-			items:
-			- name: "item3"
-			  type: "type3"
-			- name: "item4"
-			  type: "type4"
-	`)
-
-	return config
+	Name string `long:"name"`
+	Type string `long:"type"`
 }
