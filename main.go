@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
+	kongyaml "github.com/alecthomas/kong-yaml"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/renato0307/kassete/internal/config"
@@ -14,14 +15,20 @@ import (
 	"github.com/renato0307/kassete/internal/tui"
 )
 
-var cli struct {
-	ConfigFile string `short:"c" long:"config" help:"Path to the configuration file, if not set, a demo configuration will be used" env:"CONFIG"`
-	LogLevel   string `long:"loglevel" help:"Log level, the possible values are debug or info" default:"info" env:"LOG_LEVEL"`
-	LogFile    string `long:"logfile" help:"Log file, if not set, logging will be disabled" default:"" env:"LOG_FILE"`
-}
+var cli config.Config
 
 func main() {
-	ctx := kong.Parse(&cli, kong.Name("kassete"), kong.Description("kassete, the kubernetes TUI to manage resources in sets"))
+	ctx := kong.Parse(&cli,
+		kong.Name("kassete"),
+		kong.Description("kassete, the kubernetes TUI to manage resources in sets"),
+		kong.Configuration(kongyaml.Loader, "~/.kassete.yaml", "~/.config/kassete.yaml", "demo.yaml"),
+	)
+
+	if cli.Dev {
+		cli.LogLevel = logger.LogLevelDebug
+		cli.LogFile = "debug.log"
+		os.Remove(cli.LogFile) // remove previous log file, if any
+	}
 
 	var logFile *os.File
 	var err error
@@ -36,15 +43,18 @@ func main() {
 	}()
 	log := logger.InitDefaultLogger(logFile, cli.LogLevel)
 	log.Info("starting kassete")
-	log.Debug("parsed CLI arguments", "config", cli.ConfigFile)
-
-	cfg := config.Config{}
-	if cli.ConfigFile == "" {
-		log.Info("no configuration file provided, using demo configuration")
-		cfg = config.Test()
+	log.Debug("parsed CLI arguments",
+		"config", cli.ConfigFile,
+		"dev", cli.Dev,
+		"logfile", cli.LogFile,
+		"loglevel", cli.LogLevel,
+	)
+	log.Debug("loaded configuration", "sets", len(cli.Sets))
+	for _, set := range cli.Sets {
+		log.Debug("loaded set", "name", set.Name, "items", len(set.Items))
 	}
 
-	p := tea.NewProgram(tui.NewRootModel(cfg))
+	p := tea.NewProgram(tui.NewRootModel(cli))
 	_, err = p.Run()
 	ctx.FatalIfErrorf(err)
 }

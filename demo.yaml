@@ -1,0 +1,16 @@
+sets:
+    - name: set1
+      items:
+          - name: item1
+            type: kubectl
+          - name: item2
+            type: kubectl
+    - name: set2
+      items:
+          - name: item3
+            type: kubectl
+          - name: item4
+            type: kubectl
+          - name: item5
+            type: logs
+loglevel: debug
