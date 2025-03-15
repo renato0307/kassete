@@ -54,7 +54,7 @@ func main() {
 		log.Debug("loaded set", "name", set.Name, "items", len(set.Items))
 	}
 
-	p := tea.NewProgram(tui.NewRootModel(cli))
+	p := tea.NewProgram(tui.NewRootModel(cli), tea.WithAltScreen())
 	_, err = p.Run()
 	ctx.FatalIfErrorf(err)
 }

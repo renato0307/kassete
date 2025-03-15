@@ -26,6 +26,7 @@ go.work.sum
 
 # vscode
 .vscode
+__debug_bin*
 
 # Log files
 *.log
