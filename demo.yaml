@@ -1,16 +1,24 @@
 sets:
-    - name: set1
-      items:
-          - name: item1
-            type: kubectl
-          - name: item2
-            type: kubectl
-    - name: set2
-      items:
-          - name: item3
-            type: kubectl
-          - name: item4
-            type: kubectl
-          - name: item5
-            type: logs
+  - name: NATS Leaf Nodes
+    description: >
+      This set contains all the resources related to the NATS Leaf Nodes.
+    items:
+      - name: Pods
+        type: kubectl
+      - name: Services
+        type: kubectl
+      - name: Logs
+        type: kubectl
+  - name: NATS Cluster Operator
+    description: >
+      This set contains all the resources related to the NATS Cluster Operator.
+    items:
+      - name: Deployments
+        type: kubectl
+      - name: Pods
+        type: kubectl
+      - name: Jobs
+        type: kubectl
+      - name: Logs
+        type: kubectl
 loglevel: debug

@@ -12,8 +12,9 @@ type Config struct {
 }
 
 type Set struct {
-	Name  string `long:"name"`
-	Items []Item `long:"items"`
+	Name        string `long:"name"`
+	Description string `long:"description"`
+	Items       []Item `long:"items"`
 }
 
 type Item struct {

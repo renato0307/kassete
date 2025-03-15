@@ -4,22 +4,25 @@
 package tui
 
 import (
+	"log/slog"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/renato0307/kassete/internal/config"
+	"github.com/renato0307/kassete/internal/logger"
 )
 
 type model struct {
 	config  config.Config
 	current tea.Model
+	log     *slog.Logger
 }
 
 var root model
 
 func NewRootModel(config config.Config) model {
-	root = model{
-		config:  config,
-		current: newSetsModel(),
-	}
+	root = model{config: config}
+	root.current = newPickSetModel()
+	root.log = logger.DefaultLogger().With("module", "tui")
 	return root
 }
 
@@ -28,6 +31,15 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	m.log.Debug("updating model")
+	switch msg.(type) {
+	case PickSetMsg:
+		m.log.Debug("picked set")
+		m.current = newSetModel()
+	case QuitSetMsg:
+		m.log.Debug("quit set")
+		m.current = newPickSetModel()
+	}
 	return m.getCurrent().Update(msg)
 }
 
@@ -42,10 +54,16 @@ func (m model) getCurrent() tea.Model {
 	return m.current
 }
 
-func getRootModel() model {
-	return root
+func getRootModel() *model {
+	return &root
 }
 
 func getConfig() config.Config {
 	return getRootModel().config
+}
+
+func dispatch(msg tea.Msg) (tea.Model, tea.Cmd) {
+	return getRootModel(), func() tea.Msg {
+		return msg
+	}
 }
