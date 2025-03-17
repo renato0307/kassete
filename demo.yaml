@@ -1,23 +1,27 @@
 sets:
-  - name: NATS Leaf Nodes
+  - name: NATS
+    defaultNamespace: nats
     description: >
-      This set contains all the resources related to the NATS Leaf Nodes.
+      NATS is a simple, secure and high performance open source messaging system for cloud native applications, IoT messaging, and microservices architectures.
     items:
-      - name: Pods
+      - name: Statefulset
         type: kubectl
       - name: Services
         type: kubectl
-      - name: Logs
-        type: kubectl
-  - name: NATS Cluster Operator
-    description: >
-      This set contains all the resources related to the NATS Cluster Operator.
-    items:
-      - name: Deployments
-        type: kubectl
       - name: Pods
         type: kubectl
-      - name: Jobs
+      - name: Logs
+        type: kubectl
+  - name: Redis
+    defaultNamespace: redis
+    description: >
+      Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache and message broker.
+    items:
+      - name: Statefulset
+        type: kubectl
+      - name: Services
+        type: kubectl
+      - name: Pods
         type: kubectl
       - name: Logs
         type: kubectl

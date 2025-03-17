@@ -73,20 +73,20 @@ func (m pickSetModel) Init() tea.Cmd {
 }
 
 func (m pickSetModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	m.log.Debug("updating")
 	switch msg := msg.(type) {
-	case PickSetMsg:
-		m.log.Debug("picked set", "name", msg.Set.Name)
-		return dispatch(msg)
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
+		m.log.Debug("window size msg received", "height", msg.Height, "width", msg.Width, "h", h, "v", v)
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 	}
-
+	m.log.Debug("updating list", "size", len(m.list.Items()))
 	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
 
 func (m pickSetModel) View() string {
+	m.log.Debug("viewing")
 	return docStyle.Render(m.list.View())
 }

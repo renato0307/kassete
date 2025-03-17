@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/renato0307/kassete/internal/config"
 	"github.com/renato0307/kassete/internal/logger"
 )
@@ -31,19 +32,31 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	m.log.Debug("updating model")
-	switch msg.(type) {
+	m.log.Debug("updating")
+
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.log.Debug("window size changed", "height", msg.Height, "width", msg.Width)
 	case PickSetMsg:
 		m.log.Debug("picked set")
-		m.current = newSetModel()
+		m.current = newSetModel(msg.Set)
 	case QuitSetMsg:
-		m.log.Debug("quit set")
+		m.log.Debug("quit set, going back to pick set")
 		m.current = newPickSetModel()
+	case tea.KeyMsg:
+		m.log.Debug("key pressed", "key", msg.String())
+		if msg.String() == "ctrl+c" {
+			return m, tea.Quit
+		}
 	}
-	return m.getCurrent().Update(msg)
+
+	var cmd tea.Cmd
+	m.current, cmd = m.getCurrent().Update(msg)
+	return m, cmd
 }
 
 func (m model) View() string {
+	m.log.Debug("viewing")
 	return m.getCurrent().View()
 }
 
@@ -62,8 +75,8 @@ func getConfig() config.Config {
 	return getRootModel().config
 }
 
-func dispatch(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return getRootModel(), func() tea.Msg {
-		return msg
-	}
-}
+// func dispatch(msg tea.Msg) (tea.Model, tea.Cmd) {
+// 	return getRootModel(), func() tea.Msg {
+// 		return msg
+// 	}
+// }
